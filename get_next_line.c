@@ -6,11 +6,18 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:35:53 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/01 18:45:03 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/02 21:08:36 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <string.h>
+#include <fcntl.h> //for open
+#include <unistd.h> //for read
+#include <stdlib.h> //for malloc
+#include <stdio.h>
+
+
 
 /*
 Write a function that returns a line read from a
@@ -22,45 +29,49 @@ occurred
 use: read, malloc free
 */
 
-char	*get_next_line(int fd) //passing fd after opening file
+//need some macro BUFFER_SiZE (value set at compilation)
+char	*get_next_line(int fd)
 {
+	int		i;
+	//static	char	*safe; //to store leftover string in
+	char	temp[BUFFER_SIZE]; //buffer to read into, as big as buffer size
+	char	*check;
 	char	*newline;
-	int		read_bytes; //return value for read
-	char	c; //buffer for single char
-	size_t	count;
 
-	count = 0;
-	//get size of line somehow OR read byte by byte and check until \n
-	while ((read_bytes = read(fd, &c, 1)) > 0) //open returns -1 on error
+	//read buffer size and store in temp-array
+	read(fd, &temp, BUFFER_SIZE);
+	printf("buffer: %s\n", temp);
+	
+	i = 0;
+	//check for \n in temp
+	if ((check = ft_strchr(temp, '\n'))!= NULL) //CASE 1 read more than whole line, \n is there
 	{
-		if (c != "\n")
-		//for each byte count++ => size of line to malloc
-			count++;
-		else
-			break;
+		while (temp[i] != '\n')
+			i++;
+		i = i + 1; //for \n char
+		printf("len newline: %i\n", i);
 	}
-	//HOW DOES FD KNOW WHERE IN FILE I AM ? DOES IT STOP SOMEWHERE IN FILE??
 
-	
-	//malloc buffer to read into
-	
-	//read into buffer newline using read
-
-
-
+	newline = ft_substr(temp, 0, i);	
+		//if yes, return string until \n 
+		//and store leftover in safe
+		
+		
+		//if not store and do again
 
 
 
 
+
+
+
+		
 	
 	return (newline);
 }
 // need to use some static vars (that keep value until program ends)
 
 
-
-#include <stdio.h>
-#include <fcntl.h> //for open
 int main (void)
 {
 	//use open to open file and get fd
@@ -71,11 +82,13 @@ int main (void)
 	if (fd == -1)//open returns -1 on error
 	{
 		printf("error opening file\n");
-		return (1)
+		return (1);
 	}
 	printf("opened file\n");
 	
 	newline = get_next_line(fd);
-	
-	
+	printf("newline: %s\n", newline);
+	// newline = get_next_line(fd);
+	// printf("newline: %s\n", newline);
+
 }
