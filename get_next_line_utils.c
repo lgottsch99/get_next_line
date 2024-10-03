@@ -6,11 +6,31 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:40:34 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/02 20:33:00 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/03 19:30:02 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	unsigned char	*tmp;
+	unsigned char	*helpd;
+
+	if (dest == NULL && src == NULL)
+		return (dest);
+	tmp = (unsigned char *)src;
+	helpd = (unsigned char *)dest;
+	while (n)
+	{
+		*helpd = *tmp;
+		tmp++;
+		helpd++;
+		n--;
+	}
+	return (dest);
+}
 
 size_t	ft_strlen(const char *s)
 {
@@ -22,22 +42,29 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int	len;
-	int	i;
+	char	*new;
+	size_t	i;
+	size_t	y;
 
-	len = ft_strlen(s);
-	i = 0;
-	if (s == NULL)
+	new = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!new)
 		return (NULL);
-	while (i <= len)
+	i = 0;
+	while (i < ft_strlen(s1))
 	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
+		new[i] = s1[i];
 		i++;
 	}
-	return (NULL);
+	y = 0;
+	while (y < ft_strlen(s2))
+	{
+		new[i + y] = s2[y];
+		y++;
+	}
+	new[i + y] = '\0';
+	return (new);
 }
 
 char	*ft_strdup(const char *s1)
@@ -58,6 +85,25 @@ char	*ft_strdup(const char *s1)
 	}
 	return (ptr);
 }
+
+char	*ft_strchr(const char *s, int c)
+{
+	int	len;
+	int	i;
+
+	len = ft_strlen(s);
+	i = 0;
+	if (s == NULL)
+		return (NULL);
+	while (i <= len)
+	{
+		if (s[i] == (char)c)
+			return ((char *)&s[i]);
+		i++;
+	}
+	return (NULL);
+}
+
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
