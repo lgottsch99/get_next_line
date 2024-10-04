@@ -6,18 +6,19 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:35:48 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/04 18:34:58 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/04 19:11:21 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 #define GET_NEXT_LINE_H
 
-#include <string.h>
-#include <stdlib.h>
+#include <fcntl.h> //for open
+#include <unistd.h> //for read
+#include <stdlib.h> //for malloc
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 1
+#define BUFFER_SIZE 19
 #endif
 
 char	*get_next_line(int fd);

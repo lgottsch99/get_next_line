@@ -6,12 +6,12 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:35:53 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/04 18:52:56 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/04 19:29:43 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <string.h>
+
 #include <fcntl.h> //for open
 #include <unistd.h> //for read
 #include <stdlib.h> //for malloc
@@ -27,8 +27,19 @@ occurred
 use: read, malloc free
 */
 
-//test: if fd exists?, check: smallest bufsize is 1, check if bufsize <=0
+/* TO DO
+make it work for: 
+	buffer 10000000
+	buffer -5
+	
+	what if txt file empty?
+	fix memory leaks
+	
+*/
 
+//test: if fd exists?, check: smallest bufsize is 1, check if bufsize <=0
+//check stack overflow buffer
+//what if txt file empty?
 
 
 char	*read_buffer_until_nl(int fd, char *leftover)
@@ -78,7 +89,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 
 	call++;
-	if (call == 1)//first call to function
+	if (call == 1)
 	{
 		//printf("1st call\n");
 		
@@ -91,7 +102,7 @@ char	*get_next_line(int fd)
 	//	printf("new leftover: %s\n", leftover);
 		return (newline);
 	}
-	if (call > 1)//2nd or more call
+	if (call > 1)
 	{
 		//printf("2nd or moree call\n");
 		// check if leftover content exist
