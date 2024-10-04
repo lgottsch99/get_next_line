@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:35:53 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/03 19:35:53 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/04 18:52:56 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ char	*read_buffer_until_nl(int fd, char *leftover)
 	char	temp[BUFFER_SIZE + 1]; //buffer to read into, as big as buffer size + 1 for \0
 	char	*check; //ptr to \n
 
+	bytes_read = 0;
 	nl = 0;
 	while (nl == 0)
 	{
@@ -47,14 +48,11 @@ char	*read_buffer_until_nl(int fd, char *leftover)
 			break ;
 		else
 			temp[BUFFER_SIZE] = '\0'; //need to terminate for str handling ft
-//		printf("read buffer: %s\n", temp);
 
 		check = ft_strchr(temp, '\n');//returns NULL if char NOT found
 		if (check != NULL)
-		{
 			nl = 1;
-	//		printf("nl char found\n");
-		}
+		
 		//create safe
 		if (leftover)
 			safe = ft_strjoin(leftover, temp);
@@ -62,6 +60,7 @@ char	*read_buffer_until_nl(int fd, char *leftover)
 			safe = ft_strdup(temp);
 		//copy content in leftover
 		leftover = safe;
+		ft_bzero(temp, ft_strlen(temp));
 	//	printf("leftover: %s\n", leftover);
 	}
 	return (leftover);
@@ -73,8 +72,10 @@ char	*get_next_line(int fd)
 	char *safe;
 	static int	call;
 	char	*newline;
-
 	char	*check;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 
 	call++;
 	if (call == 1)//first call to function
@@ -115,7 +116,7 @@ char	*get_next_line(int fd)
 			return (newline);
 		}
 	}
-	else //not sure if needed
+	else
 	{
 		// if no:
 		// 	read buffer until \n in there
@@ -131,7 +132,6 @@ char	*get_next_line(int fd)
 		return (newline);			
 	}
 }
-
 
 
 /*	STRATEGY
@@ -164,7 +164,6 @@ if 1. call to ft:
 
 WHEN TO STOP? End of file reached -> read returns 0
 */
-
 
 
 int main (void)

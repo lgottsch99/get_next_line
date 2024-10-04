@@ -6,30 +6,24 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:40:34 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/03 19:30:02 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/04 18:34:56 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
 
-void	*ft_memcpy(void *dest, const void *src, size_t n)
+void	ft_bzero(void *s, size_t n)
 {
 	unsigned char	*tmp;
-	unsigned char	*helpd;
 
-	if (dest == NULL && src == NULL)
-		return (dest);
-	tmp = (unsigned char *)src;
-	helpd = (unsigned char *)dest;
+	tmp = (unsigned char *)s;
 	while (n)
 	{
-		*helpd = *tmp;
+		*tmp = '\0';
 		tmp++;
-		helpd++;
 		n--;
 	}
-	return (dest);
 }
 
 size_t	ft_strlen(const char *s)
