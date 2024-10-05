@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_stringapp.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:35:53 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/04 19:29:43 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/05 20:28:25 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,12 @@ char	*read_buffer_until_nl(int fd, char *leftover)
 	int		nl;
 	int		bytes_read;
 	char 	*safe;
-	char	temp[BUFFER_SIZE + 1]; //buffer to read into, as big as buffer size + 1 for \0
+	char	*temp; //buffer to read into, as big as buffer size + 1 for \0
 	char	*check; //ptr to \n
+
+	temp = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!temp)
+		return (NULL);
 
 	bytes_read = 0;
 	nl = 0;
