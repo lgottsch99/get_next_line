@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:52:10 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/08 20:33:50 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/08 20:45:14 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ OK 	EOF? need to set leftover to null
 
 no nl in file?
 memleaks??
+BUfsize 1 double free?
 
 OK 	stdin
 
@@ -110,6 +111,11 @@ char	*read_until_nl(int fd, char *buf, char *leftover)
 		//scan for nl
 		if (is_nl(new))
 		 	break;
+		else
+		{
+			free(new);
+			new = NULL;
+		}
 		
 		//free(new); //? doesnt work when no nl in file...
 		new = NULL;
@@ -148,6 +154,9 @@ char	*get_next_line(int fd)
 	newline = get_nl(leftover);
 	leftover = update(leftover);
 
+	if (leftover == NULL)
+		free (leftover);
+
 	//printf("leftover: %s\n", leftover);
 	free (buf);
 	return (newline);
@@ -165,7 +174,7 @@ return new line
 int main (void)
 {
 	//use open to open file and get fd
-	char	*filename = "empty.txt";
+	char	*filename = "sample.txt";
 	char	*newline;
 	
 	//read from file
@@ -193,7 +202,7 @@ int main (void)
 // 	// 	newline = get_next_line(0);
 // 	//  	printf("newline: %s\n", newline);
 // 	// }
-
+	
 	close(fd);
 	return (0);
 	
