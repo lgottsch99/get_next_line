@@ -1,5 +1,17 @@
-//HEADER
-#include "gnl.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/08 16:56:18 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/10/08 18:20:35 by lgottsch         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+#include "get_next_line.h"
 
 
 size_t	ft_strlen(const char *s)
@@ -56,6 +68,7 @@ char	*ft_strdup(const char *s1)
 	}
 	return (ptr);
 }
+
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	char			*tmp;
