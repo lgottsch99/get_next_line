@@ -6,13 +6,11 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:56:18 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/08 18:20:35 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:44:40 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "get_next_line.h"
-
 
 size_t	ft_strlen(const char *s)
 {
@@ -23,7 +21,6 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
-
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -100,7 +97,7 @@ int	getindexnl(char *leftover)
 	while (index < (int)ft_strlen(leftover))
 	{
 		if (leftover[index] == '\n')
-			break;
+			break ;
 		index++;
 	}
 	return (index);

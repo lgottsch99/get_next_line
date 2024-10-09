@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:52:10 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/08 20:45:14 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:41:30 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 #include <stdio.h>
 #include <unistd.h>
-
 
 /*
 check max no fds?
@@ -37,15 +36,12 @@ char	*update(char *leftover)
 
 	index = getindexnl(leftover);
 	updated = ft_substr(leftover, index + 1, ft_strlen(leftover));
-	//printf("updated: %s\n", updated);
-	
 	free(leftover);
 	leftover = NULL;
-	return (updated);
-
-	//count how much after nl
-	//substr rest
-
+	if (!updated)
+		return (NULL);
+	else
+		return (updated);
 }
 
 char	*get_nl(char *leftover)
@@ -53,12 +49,10 @@ char	*get_nl(char *leftover)
 	int		index;
 	char	*newline;
 
-	//extract nl, count until nl
 	index = getindexnl(leftover);
-	//printf("index nl: %i\n", index);
-
 	newline = ft_substr(leftover, 0, index + 1);
-
+	if (!newline)
+		return (NULL);
 	return (newline);
 }
 
@@ -84,81 +78,77 @@ char	*read_until_nl(int fd, char *buf, char *leftover)
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
-		//read into buf
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read < 0)
 			return (NULL);
-		if (bytes_read == 0) //EOF
+		if (bytes_read == 0)
 			break;
-
 		buf[bytes_read] = '\0';
-		//printf("read: %s\n", buf);
-		
-		//join with leftover, create new str, free old one
 		if (leftover)
-		{	
-			new = ft_strjoin(leftover, buf); //malloc
+		{
+			new = ft_strjoin(leftover, buf);
 			free(leftover);
 			leftover = NULL;
+			if (!new)
+				return (NULL);
 		}
-		else
-		  	new = ft_strdup(buf);
-
-		//printf("new str: %s\n", new);
-		//free(leftover); //put to null?
-		leftover = new;
-		
-		//scan for nl
-		if (is_nl(new))
-		 	break;
 		else
 		{
-			free(new);
-			new = NULL;
+			new = ft_strdup(buf);
+			if (!new)
+				return (NULL);
 		}
-		
-		//free(new); //? doesnt work when no nl in file...
+		leftover = new;
 		new = NULL;
+		if (is_nl(leftover))
+			break;	
 	}
 	return (leftover);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*leftover; //constantly created str
+	static char	*leftover;
 	char		*buf;
 	char		*newline;
 
-	//safety check
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 
-	if (leftover && ft_strlen(leftover) == 0)//check for nothing else to read
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (NULL);
+	if (read(fd, buf, 0) < 0)
+	{
+		free(buf);
+		buf = NULL;
+		free(leftover);
+		leftover = NULL;
+		return (NULL);
+	}
+	leftover = read_until_nl(fd, buf, leftover);
+	free(buf);
+	buf = NULL;
+	if (!leftover)
+		return (NULL);
+	newline = get_nl(leftover);
+	if(!newline)
+	{
+		free(leftover);
+		leftover = NULL;
+		return (NULL);
+	}	
+	leftover = update(leftover);
+	if (!leftover || ft_strlen(leftover) == 0)
+	{
+		free (leftover);
+		leftover = NULL;
+	}
+	if (leftover && ft_strlen(leftover) == 0)
 	{
 		free(leftover);
 		leftover = NULL;
 	}
-		
-	//allocate buf to read into | dynamic = in heap
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
-		return (NULL);
-
-	//read until nl
-	leftover = read_until_nl(fd, buf, leftover);
-	//printf("static leftover: %s\n", leftover);
-	if (!leftover)
-		return (NULL);
-	
-	//extract newline, update leftover
-	newline = get_nl(leftover);
-	leftover = update(leftover);
-
-	if (leftover == NULL)
-		free (leftover);
-
-	//printf("leftover: %s\n", leftover);
-	free (buf);
 	return (newline);
 }
 
@@ -171,39 +161,37 @@ return new line
 
 */
 
-int main (void)
-{
-	//use open to open file and get fd
-	char	*filename = "sample.txt";
-	char	*newline;
+// int main (void)
+// {
+// 	//use open to open file and get fd
+// 	char	*filename = "sample.txt";
+// 	char	*newline;
 	
-	//read from file
-	int	fd = open(filename, O_RDONLY);
-	if (fd == -1)//open returns -1 on error
-	{
-		printf("error opening file\n");
-		return (1);
-	}
-	//print  lines
-	for (int i = 0; i < 10; i++)
-	{
-		newline = get_next_line(fd);
-		printf("newline: %s\n", newline);
-		free(newline);
-		newline = NULL;
-	}
-
-	
+// 	//read from file
+// 	int	fd = open(filename, O_RDONLY);
+// 	if (fd == -1)//open returns -1 on error
+// 	{
+// 		printf("error opening file\n");
+// 		return (1);
+// 	}
+// 	//print  lines
+// 	for (int i = 0; i < 10; i++)
+// 	{
+// 		newline = get_next_line(fd);
+// 		printf("newline: %s\n", newline);
+// 		free(newline);
+// 		newline = NULL;
+// 	}
 
 // 	//read from stdin (terminal)
 	
 // 	// for (int i = 0; i < 9; i++)
 // 	// {
 // 	// 	newline = get_next_line(0);
-// 	//  	printf("newline: %s\n", newline);
+// //  	printf("newline: %s\n", newline);
 // 	// }
 	
-	close(fd);
-	return (0);
+// 	close(fd);
+// 	return (0);
 	
-}
+// }
