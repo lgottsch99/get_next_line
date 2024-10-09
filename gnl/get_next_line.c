@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:52:10 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/09 16:41:30 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:26:05 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,47 +18,34 @@
 /*
 check max no fds?
 
-ok	empty file?
-OK 	EOF? need to set leftover to null 
-
-no nl in file?
-memleaks??
-BUfsize 1 double free?
-
-OK 	stdin
+fix freeing if read ret -1 between calls
 
 */
 
-char	*update(char *leftover)
-{
-	int index;
-	char	*updated;
-
-	index = getindexnl(leftover);
-	updated = ft_substr(leftover, index + 1, ft_strlen(leftover));
-	free(leftover);
-	leftover = NULL;
-	if (!updated)
-		return (NULL);
-	else
-		return (updated);
-}
-
-char	*get_nl(char *leftover)
+//use double pointer so u can operate on static pointer
+char	*get_nl_and_update(char	**leftover)
 {
 	int		index;
 	char	*newline;
+	char	*updated;
 
-	index = getindexnl(leftover);
-	newline = ft_substr(leftover, 0, index + 1);
+	index = getindexnl(*leftover);
+	newline = ft_substr(*leftover, 0, index + 1);
 	if (!newline)
 		return (NULL);
+	updated = ft_substr(*leftover, index + 1, ft_strlen(*leftover));
+	free(*leftover);
+	*leftover = NULL;
+	if (!updated)
+		return (NULL);
+	else
+		*leftover = updated;
 	return (newline);
 }
 
 int	is_nl(char *new)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (i < ft_strlen(new))
@@ -70,7 +57,28 @@ int	is_nl(char *new)
 	return (0);
 }
 
-char	*read_until_nl(int fd, char *buf, char *leftover)
+char	*make_new(char **leftover, char *buf)
+{
+	char	*new;
+
+	if (*leftover)
+	{
+		new = ft_strjoin(*leftover, buf);
+		free(*leftover);
+		*leftover = NULL;
+		if (!new)
+			return (NULL);
+	}
+	else
+	{
+		new = ft_strdup(buf);
+		if (!new)
+			return (NULL);
+	}
+	return (new);
+}
+
+char	*read_until_nl(int fd, char *buf, char **leftover)
 {
 	char	*new;
 	int		bytes_read;
@@ -80,30 +88,23 @@ char	*read_until_nl(int fd, char *buf, char *leftover)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read < 0)
+		{
+			free(*leftover);
+			*leftover = NULL;
 			return (NULL);
+		}
 		if (bytes_read == 0)
-			break;
+			break ;
 		buf[bytes_read] = '\0';
-		if (leftover)
-		{
-			new = ft_strjoin(leftover, buf);
-			free(leftover);
-			leftover = NULL;
-			if (!new)
-				return (NULL);
-		}
-		else
-		{
-			new = ft_strdup(buf);
-			if (!new)
-				return (NULL);
-		}
-		leftover = new;
+		new = make_new(leftover, buf);
+		if (!new)
+			return (NULL);
+		*leftover = new;
 		new = NULL;
-		if (is_nl(leftover))
-			break;	
+		if (is_nl(*leftover))
+			break ;
 	}
-	return (leftover);
+	return (*leftover);
 }
 
 char	*get_next_line(int fd)
@@ -112,41 +113,23 @@ char	*get_next_line(int fd)
 	char		*buf;
 	char		*newline;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		return (NULL);
-	if (read(fd, buf, 0) < 0)
-	{
-		free(buf);
-		buf = NULL;
-		free(leftover);
-		leftover = NULL;
-		return (NULL);
-	}
-	leftover = read_until_nl(fd, buf, leftover);
+	leftover = read_until_nl(fd, buf, &leftover);
 	free(buf);
 	buf = NULL;
 	if (!leftover)
-		return (NULL);
-	newline = get_nl(leftover);
-	if(!newline)
 	{
-		free(leftover);
-		leftover = NULL;
+		free(buf);
 		return (NULL);
-	}	
-	leftover = update(leftover);
+	}
+	newline = get_nl_and_update(&leftover);
 	if (!leftover || ft_strlen(leftover) == 0)
 	{
 		free (leftover);
-		leftover = NULL;
-	}
-	if (leftover && ft_strlen(leftover) == 0)
-	{
-		free(leftover);
 		leftover = NULL;
 	}
 	return (newline);
@@ -158,7 +141,6 @@ extract new line, shorten leftover
 free buf
 return new line
 
-
 */
 
 // int main (void)
@@ -166,7 +148,7 @@ return new line
 // 	//use open to open file and get fd
 // 	char	*filename = "sample.txt";
 // 	char	*newline;
-	
+
 // 	//read from file
 // 	int	fd = open(filename, O_RDONLY);
 // 	if (fd == -1)//open returns -1 on error
@@ -181,17 +163,20 @@ return new line
 // 		printf("newline: %s\n", newline);
 // 		free(newline);
 // 		newline = NULL;
+// 	close(fd);
+
+	
+
 // 	}
 
 // 	//read from stdin (terminal)
-	
+
 // 	// for (int i = 0; i < 9; i++)
 // 	// {
 // 	// 	newline = get_next_line(0);
 // //  	printf("newline: %s\n", newline);
 // 	// }
-	
+
 // 	close(fd);
 // 	return (0);
-	
 // }
