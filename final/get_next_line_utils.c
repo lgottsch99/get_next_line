@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:56:18 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/10 17:00:27 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:25:23 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,25 +47,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (new);
 }
 
-// char	*ft_strdup(const char *s1)
-// {
-// 	char	*ptr;
-// 	int		len;
-// 	int		i;
-
-// 	len = ft_strlen(s1) + 1;
-// 	ptr = (char *)malloc(sizeof(char) * len);
-// 	if (!ptr)
-// 		return (NULL);
-// 	i = 0;
-// 	while (i < len)
-// 	{
-// 		ptr[i] = (char)s1[i];
-// 		i++;
-// 	}
-// 	return (ptr);
-// }
-
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	char	*new_str;
@@ -84,29 +65,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	new_str[j] = '\0';
 	return (new_str);
 }
-
-// char	*ft_substr(char const *s, unsigned int start, size_t len)
-// {
-// 	char			*tmp;
-// 	char			*sub;
-// 	unsigned int	i;
-
-// 	if (!s)
-// 		return (NULL);
-// 	if (start > ft_strlen(s))
-// 		return (ft_strdup(""));
-// 	if (len > ft_strlen(s) - start)
-// 		len = ft_strlen(s) - start;
-// 	sub = (char *)malloc(sizeof(char) * (len + 1));
-// 	if (!sub)
-// 		return (NULL);
-// 	tmp = (char *)s;
-// 	i = 0;
-// 	while (i < len)
-// 		sub[i++] = tmp[start++];
-// 	sub[i] = '\0';
-// 	return (sub);
-// }
 
 int	getindexnl(char *leftover)
 {

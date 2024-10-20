@@ -5,46 +5,26 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/30 15:35:48 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/05 15:48:52 by lgottsch         ###   ########.fr       */
+/*   Created: 2024/10/08 16:53:36 by lgottsch          #+#    #+#             */
+/*   Updated: 2024/10/11 15:02:00 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
-#define GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-#include <fcntl.h> //for open
-#include <unistd.h> //for read
-#include <stdlib.h> //for malloc
+# include <stdlib.h> //malloc, free
+# include <string.h> //size t
+# include <unistd.h> //read
 
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 19
-#endif
-
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}	t_list;
-
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 100
+# endif
 
 char	*get_next_line(int fd);
-
-char	*ft_strchr(const char *s, int c);
 size_t	ft_strlen(const char *s);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-char	*ft_strdup(const char *s1);
 char	*ft_strjoin(char const *s1, char const *s2);
-void	ft_bzero(void *s, size_t n);
-
-t_list	*ft_lstnew(void *content);
-void	ft_lstadd_back(t_list **lst, t_list *new);
-t_list	*ft_lstlast(t_list *lst);
-int	ft_lstsize(t_list *lst);
-
-void	print(void	*ptr);
-void	ft_lstiter(t_list *lst, void (*f)(void *));
-
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+int		getindexnl(char *leftover);
 
 #endif

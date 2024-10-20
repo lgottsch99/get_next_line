@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:53:36 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/09 16:43:56 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/10 17:17:18 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 # include <stdlib.h> //malloc, free
 # include <string.h> //size t
-# include <fcntl.h> //read open close
+# include <unistd.h> //read
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 100
+#  define BUFFER_SIZE 10000
 # endif
 
 char	*get_next_line(int fd);

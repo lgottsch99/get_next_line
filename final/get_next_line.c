@@ -6,7 +6,7 @@
 /*   By: lgottsch <lgottsch@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 16:52:10 by lgottsch          #+#    #+#             */
-/*   Updated: 2024/10/10 17:19:52 by lgottsch         ###   ########.fr       */
+/*   Updated: 2024/10/11 15:01:57 by lgottsch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 /*
 check max no fds?
-fix freeing if read ret -1 between calls?????
 */
 
 //use double pointer so u can operate on static pointer
@@ -83,11 +82,7 @@ char	*read_until_nl(int fd, char *buf, char **leftover)
 	{
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 		if (bytes_read < 0)
-		{
-			free(*leftover);
-			*leftover = NULL;
-			return (NULL);
-		}
+			return (free(*leftover), *leftover = NULL, NULL);
 		if (bytes_read == 0)
 			break ;
 		buf[bytes_read] = '\0';
@@ -108,14 +103,11 @@ char	*get_next_line(int fd)
 	char		*buf;
 	char		*newline;
 
+	if (BUFFER_SIZE <= 0 || fd < 0)
+		return (free(leftover), leftover = NULL, NULL);
 	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf || fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-	{
-		free (buf);
-		free(leftover);
-		leftover = NULL;
-		return (NULL);
-	}
+	if (!buf)
+		return (free(buf), free(leftover), leftover = NULL, NULL);
 	leftover = read_until_nl(fd, buf, &leftover);
 	free(buf);
 	buf = NULL;
@@ -136,16 +128,16 @@ char	*get_next_line(int fd)
 // int main (void)
 // {
 // 	//use open to open file and get fd
-// 	char	*filename = "emptyfile.txt";
+// 	char	*filename = "sample.txt";
 // 	char	*newline;
 
 // 	//read from file
 // 	int	fd = open(filename, O_RDONLY);
-// 	if (fd == -1)//open returns -1 on error
-// 	{
-// 		printf("error opening file\n");
-// 		return (1);
-// 	}
+// 	// if (fd == -1)//open returns -1 on error
+// 	// {
+// 	// 	printf("error opening file\n");
+// 	// 	return (1);
+// 	// }
 // 	//print  lines
 // 	for (int i = 0; i < 10; i++)
 // 	{
@@ -156,7 +148,6 @@ char	*get_next_line(int fd)
 // 		printf("newline: %s\n", newline);
 // 		free(newline);
 // 		newline = NULL;
-
 // 	}
 
 // 	//read from stdin (terminal)
